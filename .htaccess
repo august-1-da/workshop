@@ -1,0 +1,18 @@
+ Options -Indexes
+
+ <IfModule mod_rewrite.c>
+     RewriteEngine On
+
+     # Bloquer les dossiers contenant du code ou des donnees internes.
+     RewriteRule ^(?:config|includes|uploads)(?:/|$) - [F,L,NC]
+
+     # Bloquer les fichiers sensibles meme s'ils sont places ailleurs.
+     RewriteRule ^(?:\.env|\.git|.*\.(?:sqlite|sqlite3|db|sql|ini|log|bak|dist))(?:$|/) - [F,L,NC]
+
+     # Les fichiers envoyes ne doivent jamais etre executes comme du PHP.
+     RewriteRule ^upload/.*\.(?:php|phtml|phar)$ - [F,L,NC]
+ </IfModule>
+
+ <FilesMatch "^\.htaccess$|\.(?:sqlite|sqlite3|db|sql|ini|log|bak|dist)$">
+     Require all denied
+ </FilesMatch>

@@ -1,0 +1,200 @@
+/* ---- Application plein écran façon Windows XP ---- */
+ 
+.bureau {
+  height: 100vh;
+}
+ 
+.fenetre-xp {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: #ece9d8;
+  /* plus de largeur maximale, plus d'ombre, plus de coins arrondis :
+     la fenêtre EST la page */
+}
+ 
+/* Barre de titre : pleine largeur, collée en haut */
+ 
+.barre-titre {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 5px 6px 5px 10px;
+  background: linear-gradient(180deg, #8a8a8a 0%, #6f6f6f 8%, #5a5a5a 50%, #6f6f6f 92%, #4d4d4d 100%);
+  border-bottom: 1px solid #4d4d4d;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: bold;
+  text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5);
+  user-select: none;
+}
+ 
+.barre-titre-gauche {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+ 
+.icone-titre {
+  width: 14px;
+  height: 14px;
+  background: #ece9d8;
+  border: 1px solid #4d4d4d;
+  display: inline-block;
+}
+ 
+.barre-titre-boutons {
+  display: flex;
+  gap: 3px;
+}
+ 
+.btn-xp {
+  width: 22px;
+  height: 19px;
+  font-family: Tahoma, sans-serif;
+  font-size: 11px;
+  font-weight: bold;
+  color: #2b2b2b;
+  background: linear-gradient(180deg, #f4f4f4 0%, #c9c9c9 50%, #a8a8a8 100%);
+  border: 1px solid #4d4d4d;
+  border-radius: 2px;
+  cursor: pointer;
+  line-height: 1;
+}
+ 
+.btn-xp:hover {
+  background: linear-gradient(180deg, #ffffff 0%, #d8d8d8 50%, #b6b6b6 100%);
+}
+ 
+.btn-fermer {
+  background: linear-gradient(180deg, #f6a8a0 0%, #d9564a 50%, #b3392f 100%);
+  color: #ffffff;
+}
+ 
+/* Barre de menu */
+ 
+.barre-menu {
+  flex: 0 0 auto;
+  display: flex;
+  gap: 18px;
+  padding: 4px 12px;
+  background: #ece9d8;
+  border-bottom: 1px solid #b7b39c;
+  font-size: 12px;
+  user-select: none;
+}
+ 
+.barre-menu span {
+  padding: 1px 6px;
+  cursor: default;
+}
+ 
+.barre-menu span:hover {
+  background: #316ac5;
+  color: #ffffff;
+}
+ 
+/* Zone de contenu : occupe tout l'espace restant et défile seule */
+ 
+.corps-fenetre {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  background: #ffffff;
+  border-top: 1px solid #ffffff;
+  border-left: 2px inset #d8d4c0;
+  padding: 34px 40px 50px;
+}
+ 
+/* Le texte reste lisible même sur un grand écran */
+ 
+.corps-fenetre h1,
+.corps-fenetre #texte-enigme,
+.corps-fenetre .zone-sortie {
+  max-width: 780px;
+  margin-left: auto;
+  margin-right: auto;
+}
+ 
+.corps-fenetre h1 {
+  font-size: 19px;
+  color: #003399;
+  border-bottom: 1px solid #c9c5b0;
+  padding-bottom: 10px;
+  margin-top: 0;
+  margin-bottom: 22px;
+}
+ 
+#texte-enigme {
+  font-size: 14px;
+  line-height: 1.85;
+  color: #1a1a1a;
+  text-align: justify;
+}
+ 
+#texte-enigme strong {
+  color: #000000;
+}
+ 
+/* Bouton de sortie */
+ 
+.zone-sortie {
+  margin-top: 34px;
+  min-height: 32px;
+}
+ 
+.lien-sortie {
+  display: inline-block;
+  visibility: visible;
+  opacity: 1;
+  padding: 7px 18px;
+  background: linear-gradient(180deg, #f4f4f4 0%, #c9c9c9 50%, #a8a8a8 100%);
+  border: 1px solid #4d4d4d;
+  border-radius: 3px;
+  color: #2b2b2b;
+  font-weight: bold;
+  font-size: 13px;
+  text-decoration: none;
+  transition: opacity 0.3s ease;
+}
+ 
+.lien-sortie:hover {
+  background: linear-gradient(180deg, #ffffff 0%, #d8d8d8 50%, #b6b6b6 100%);
+}
+ 
+/* Cliqué trop tôt : le bouton s'efface */
+.lien-sortie.masque {
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+}
+ 
+/* Combinaison entrée : le bouton devient le vrai lien vers la page suivante */
+.lien-sortie.debloque {
+  background: linear-gradient(180deg, #ffe27a 0%, #f5c518 50%, #d9a406 100%);
+  border-color: #8a6d00;
+  color: #3a2c00;
+}
+ 
+.lien-sortie.debloque:hover {
+  background: linear-gradient(180deg, #fff0a3 0%, #f7d038 50%, #e0b30a 100%);
+}
+ 
+/* Barre de statut collée en bas */
+ 
+.barre-statut {
+  flex: 0 0 auto;
+  padding: 4px 12px;
+  background: #ece9d8;
+  border-top: 1px solid #ffffff;
+  font-size: 11px;
+  color: #444444;
+  user-select: none;
+}
+ 
+@media (max-width: 700px) {
+  .corps-fenetre { padding: 20px 18px 40px; }
+  .corps-fenetre h1 { font-size: 16px; }
+  #texte-enigme { font-size: 13px; line-height: 1.7; }
+}
+ 

@@ -1,0 +1,187 @@
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #d4d4d4;
+  font-family: "Geist Pixel", cursive;
+}
+
+.altf4-header {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  background-color: #0000f4;
+  color: #ffffff;
+  z-index: 10000;
+  display: flex;
+  justify-content: space-between;
+  flex-direction: row;
+  align-items: center;
+  font-family: "Geist Pixel", cursive;
+  height: 50px;
+}
+
+.header-content {
+  padding-left: 10px;
+  font-size: 14px;
+}
+
+.header-button {
+  background-color: #ff0103;
+  border: 2px solid #cbcbce;
+  width: 25px;
+  height: 25px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-right: 10px;
+}
+
+.exit-button {
+    text-decoration: none;
+    color: #ffffff;
+    background: none; 
+    border: none;
+}
+
+.altf4-footer {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  background-color: #0000f4;
+  color: #ffffff;
+  z-index: 10000;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: "Geist Pixel", cursive;
+  height: 50px;
+}
+
+.footer-menu {
+  padding: 0 15px;
+  font-size: 16px;
+  background-color: #22cb32;
+  border-radius: 0 20px 20px 0;
+}
+
+.footer-timer{
+  padding: 0 15px;
+  font-size: 14px;
+}
+
+main {
+  padding-top: 50px;
+  padding-bottom: 50px;
+  margin: 0 auto;
+  width: 1700px;
+}
+
+.result {
+  margin: 0 auto;
+  padding: 24px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.finish-photos {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+}
+
+.finish-photos figure {
+  margin: 0;
+}
+
+.finish-photos img {
+  display: block;
+  width: 75%;
+  object-fit: cover;
+}
+
+.finish-photos figcaption {
+  padding: 8px 0;
+}
+
+
+
+
+
+/* ---- Contenu de la page 2 ---- */
+ 
+.contenu {
+  background: #ffffff;
+  padding: 34px 40px 50px;
+}
+ 
+.contenu h1,
+.contenu #texte-enigme,
+.contenu .zone-sortie {
+  max-width: 780px;
+  margin-left: auto;
+  margin-right: auto;
+}
+ 
+.contenu h1 {
+  font-size: 19px;
+  color: #003399;
+  border-bottom: 1px solid #c9c5b0;
+  padding-bottom: 10px;
+  margin-top: 0;
+  margin-bottom: 22px;
+}
+ 
+#texte-enigme {
+  font-size: 14px;
+  line-height: 1.85;
+  text-align: justify;
+}
+ 
+#texte-enigme strong {
+  color: #000000;
+}
+ 
+/* ---- Bouton de sortie ---- */
+ 
+.zone-sortie {
+  margin-top: 34px;
+  min-height: 32px;
+}
+ 
+.lien-sortie {
+  display: inline-block;
+  visibility: visible;
+  opacity: 1;
+  padding: 7px 18px;
+  background: linear-gradient(180deg, #f4f4f4 0%, #c9c9c9 50%, #a8a8a8 100%);
+  border: 1px solid #4d4d4d;
+  border-radius: 3px;
+  color: #2b2b2b;
+  font-weight: bold;
+  font-size: 13px;
+  text-decoration: none;
+  transition: opacity 0.3s ease;
+}
+ 
+.lien-sortie:hover {
+  background: linear-gradient(180deg, #ffffff 0%, #d8d8d8 50%, #b6b6b6 100%);
+}
+ 
+/* Cliqué trop tôt : le bouton s'efface */
+.lien-sortie.masque {
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+}
+ 
+/* Combinaison entrée : le bouton devient le vrai lien vers la page suivante */
+.lien-sortie.debloque {
+  background: linear-gradient(180deg, #ffe27a 0%, #f5c518 50%, #d9a406 100%);
+  border-color: #8a6d00;
+  color: #3a2c00;
+}
+ 
+.lien-sortie.debloque:hover {
+  background: linear-gradient(180deg, #fff0a3 0%, #f7d038 50%, #e0b30a 100%);
+}
