@@ -1,5 +1,5 @@
 <?php
-// Récupère les photos prises sur chaque page et les enregistre dans le dossier upload, puis renvoie le chemin de la photo au format JSON.
+// Valide les photos prises sur chaque page et renvoie leur contenu complet.
 declare(strict_types=1);
 
 require_once __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'database.php';
@@ -14,7 +14,7 @@ $page = filter_var($input['page'] ?? null, FILTER_VALIDATE_INT);
 $image = (string) ($input['image'] ?? '');
 
 // Validation des données
-if ($page === false || $page < 1 || $page > 5 || $image === '') {
+if ($page === false || $page < 1 || $page > 6 || $image === '') {
     sendJson(['success' => false, 'error' => 'Page ou image invalide.'], 422);
 }
 
@@ -43,22 +43,11 @@ if ($extension === null) {
     sendJson(['success' => false, 'error' => 'Type d’image non autorisé.'], 422);
 }
 
-// Crée le dossier upload s’il n’existe pas et enregistre l’image
-$uploadDirectory = dirname(__DIR__) . DIRECTORY_SEPARATOR . 'upload';
-if (!is_dir($uploadDirectory) && !mkdir($uploadDirectory, 0755, true) && !is_dir($uploadDirectory)) {
-    sendJson(['success' => false, 'error' => 'Impossible de créer le dossier upload.'], 500);
-}
+// La photo est conservée directement dans la BDD sous forme d’URI data.
+$storedImage = 'data:' . $imageInfo['mime'] . ';base64,' . base64_encode($imageData);
 
-$fileName = sprintf('page-%d-%s.%s', $page, bin2hex(random_bytes(16)), $extension);
-$filePath = $uploadDirectory . DIRECTORY_SEPARATOR . $fileName;
-
-if (file_put_contents($filePath, $imageData, LOCK_EX) === false) {
-    sendJson(['success' => false, 'error' => 'Impossible d’enregistrer la photo.'], 500);
-}
-
-// Envoie la réponse JSON avec le chemin de la photo
 sendJson([
     'success' => true,
     'page' => $page,
-    'path' => 'upload/' . $fileName,
+    'path' => $storedImage,
 ], 201);

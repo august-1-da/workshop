@@ -9,7 +9,9 @@
 
 <script src="assets/js/global.js"></script>
 <script>
-    recordPageTiming('fin');
+    if (/\/fin\.php$/i.test(window.location.pathname)) {
+        recordPageTiming('fin');
+    }
     const timerElement = document.querySelector('.footer-timer');
     const timerParagraph = document.querySelector('#timer');
     if (timerElement && timerParagraph) {

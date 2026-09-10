@@ -1,4 +1,6 @@
 <?php
+require __DIR__ . DIRECTORY_SEPARATOR . 'includes' . DIRECTORY_SEPARATOR . 'access_guard.php';
+
 $firstName = $_GET['first_name'] ?? '';
 $lastName = $_GET['last_name'] ?? '';
 ?>
@@ -17,6 +19,10 @@ $lastName = $_GET['last_name'] ?? '';
         </section>
     </div>
     <div id="finish-photos" class="finish-photos">Aucune photo disponible.</div>
+    <div class="finish-actions">
+        <button id="finish-leaderboard" type="button">Envoyer au leaderboard</button>
+        <p id="finish-feedback" role="status" aria-live="polite"></p>
+    </div>
 </main>
 
 <?php require __DIR__ . DIRECTORY_SEPARATOR . 'includes' . DIRECTORY_SEPARATOR . 'footer.php'; ?>

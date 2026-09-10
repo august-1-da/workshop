@@ -13,7 +13,7 @@ try {
     $statement = $database->query(
         'SELECT id, photo, first_name, last_name, final_time, stopped_at, created_at
          FROM scores
-         ORDER BY final_time_ms ASC, stopped_at DESC'
+         ORDER BY stopped_at DESC, final_time_ms ASC'
     );
 
     sendJson(['success' => true, 'scores' => $statement->fetchAll()]);

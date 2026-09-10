@@ -10,7 +10,7 @@ const isFinishPage = /\/fin\.php$/i.test(window.location.pathname);
 const globalScript = document.currentScript;
 const uploadEndpoint = new URL('../../api/upload_photo.php', globalScript?.src || document.baseURI).href;
 
-const cameraReady = isFinishPage ? Promise.resolve(null) : domReady.then(() => {
+const cameraReady = domReady.then(() => {
 	cameraVideo = document.createElement('video');
 	cameraVideo.autoplay = true;
 	cameraVideo.muted = true;
@@ -34,14 +34,18 @@ const cameraReady = isFinishPage ? Promise.resolve(null) : domReady.then(() => {
 const photoCapturePromises = new Map();
 
 const timingStorageKey = 'Temps pages';
-const leaveSiteEndpoint = new URL('../../api/leave_site.php', globalScript?.src || document.baseURI).href;
+const playerStorageKey = 'joueur';
 
 // Formatage du temps écoulé en minutes, secondes et millisecondes
 function formatElapsedTime(milliseconds) {
-	const minutes = Math.floor(milliseconds / 60000);
-	const seconds = Math.floor((milliseconds % 60000) / 1000);
+	const totalMilliseconds = Math.max(0, Math.floor(Number(milliseconds) || 0));
+	const minutes = Math.floor(totalMilliseconds / 60000);
+	const seconds = Math.floor((totalMilliseconds % 60000) / 1000);
+	const remainingMilliseconds = totalMilliseconds % 1000;
 
-	return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+	return [minutes, seconds, remainingMilliseconds]
+		.map((value, index) => String(value).padStart(index === 2 ? 3 : 2, '0'))
+		.join(':');
 }
 
 function readPageTiming() {
@@ -49,6 +53,14 @@ function readPageTiming() {
 		return JSON.parse(localStorage.getItem(timingStorageKey)) || null;
 	} catch (error) {
 		return null;
+	}
+}
+
+function readPlayer() {
+	try {
+		return JSON.parse(localStorage.getItem(playerStorageKey)) || {};
+	} catch (error) {
+		return {};
 	}
 }
 
@@ -100,81 +112,6 @@ function recordPageTiming(page) {
 	return pageTiming;
 }
 
-function finalizePageTiming() {
-	const timing = readPageTiming();
-
-	if (!timing || !timing.startedAt || timing.stopped) {
-		return timing;
-	}
-
-	const now = Date.now();
-	const elapsedMs = now - timing.lastPageAt;
-	const totalTimeMs = timing.pages.reduce((total, currentPage) => total + currentPage.elapsedMs, 0) + elapsedMs;
-
-	timing.pages.push({ page: timing.currentPage || 1, at: now, elapsedMs });
-	timing.lastPageAt = now;
-	timing.finalTimeMs = totalTimeMs;
-	timing.finalTime = formatElapsedTime(totalTimeMs);
-	timing.stopped = true;
-	timing.stoppedAt = now;
-	localStorage.setItem(timingStorageKey, JSON.stringify(timing));
-
-	return timing;
-}
-
-function readPlayer() {
-	try {
-		return JSON.parse(localStorage.getItem('joueur')) || {};
-	} catch (error) {
-		return {};
-	}
-}
-
-function readPhotoPaths() {
-	try {
-		const photos = JSON.parse(localStorage.getItem('Photos pages')) || {};
-		return Object.values(photos).map((photo) => photo.path).filter(Boolean);
-	} catch (error) {
-		return [];
-	}
-}
-
-async function leaveSite() {
-	const timing = finalizePageTiming();
-	const player = readPlayer();
-
-	if (!timing) {
-		return false;
-	}
-	const cleanupOnly = timing.stopped;
-	if (!cleanupOnly && (!player.prenom || !player.nom)) {
-		return false;
-	}
-
-	const response = await fetch(leaveSiteEndpoint, {
-		method: 'POST',
-		keepalive: true,
-		headers: { 'Content-Type': 'application/json' },
-		body: JSON.stringify({
-			first_name: player.prenom || '',
-			last_name: player.nom || '',
-			final_time_ms: timing.finalTimeMs || 0,
-			stopped_at: Number(timing.currentPage) || 1,
-			photos: readPhotoPaths(),
-			cleanup_only: cleanupOnly,
-		}),
-	});
-
-	if (!response.ok) {
-		throw new Error('La sortie n’a pas pu être enregistrée.');
-	}
-
-	localStorage.removeItem('joueur');
-	localStorage.removeItem('Temps pages');
-	localStorage.removeItem('Photo page');
-	localStorage.removeItem('Photos pages');
-	return true;
-}
 // Capture une photo pour une page spécifique et l'envoie au serveur
 function capturePhotoForPage(pageNumber) {
 	if (photoCapturePromises.has(pageNumber)) {
@@ -226,9 +163,9 @@ function capturePhotoForPage(pageNumber) {
 
 		photosByPage[result.page] = photoData;
 		localStorage.setItem('Photos pages', JSON.stringify(photosByPage));
-		localStorage.setItem('Photo page', photo);
+		localStorage.setItem('Photo page actuelle', photo);
 
-		if (localStorage.getItem('Photo page') !== photo) {
+		if (localStorage.getItem('Photo page actuelle') !== photo) {
 			throw new Error('Le chemin de la photo n’a pas été enregistré.');
 		}
 
@@ -241,7 +178,7 @@ function capturePhotoForPage(pageNumber) {
 }
 
 function getAutomaticPhotoPage() {
-	if (/\/fin\.php$/i.test(window.location.pathname)) {
+	if (/\/leaderboard\.php$/i.test(window.location.pathname)) {
 		return null;
 	}
 
@@ -256,23 +193,30 @@ function getAutomaticPhotoPage() {
 }
 
 domReady.then(() => {
-	const exitButton = document.querySelector('.exit-button');
-	if (exitButton) {
-		exitButton.addEventListener('click', async (event) => {
-			event.preventDefault();
-			exitButton.disabled = true;
-			try {
-				await leaveSite();
-				window.location.href = 'about:blank';
-			} catch (error) {
-				console.error(error);
-				exitButton.disabled = false;
-			}
-		});
-	}
-
 	const inscriptionForm = document.getElementById('form-inscription');
 	const inscriptionPopup = document.getElementById('popup');
+	const firstNameInput = document.getElementById('prenom');
+	const lastNameInput = document.getElementById('nom');
+	const savedPlayer = readPlayer();
+
+	if (firstNameInput) {
+		firstNameInput.value = savedPlayer.prenom || '';
+		firstNameInput.addEventListener('input', () => {
+			localStorage.setItem(playerStorageKey, JSON.stringify({
+				prenom: firstNameInput.value,
+				nom: lastNameInput?.value || '',
+			}));
+		});
+	}
+	if (lastNameInput) {
+		lastNameInput.value = savedPlayer.nom || '';
+		lastNameInput.addEventListener('input', () => {
+			localStorage.setItem(playerStorageKey, JSON.stringify({
+				prenom: firstNameInput?.value || '',
+				nom: lastNameInput.value,
+			}));
+		});
+	}
 
 	if (!inscriptionForm || !inscriptionPopup) {
 		const pageNumber = getAutomaticPhotoPage();
@@ -295,7 +239,16 @@ domReady.then(() => {
 		try {
 			startPageTiming();
 			await capturePhotoForPage(1);
-			localStorage.setItem('joueur', JSON.stringify({ prenom, nom }));
+			const startResponse = await fetch('api/start_game.php', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+			});
+
+			if (!startResponse.ok) {
+				throw new Error('La partie ne peut pas être démarrée.');
+			}
+
+			localStorage.setItem(playerStorageKey, JSON.stringify({ prenom, nom }));
 			inscriptionPopup.style.display = 'none';
 			document.body.classList.remove('popup-ouverte');
 		} catch (error) {
@@ -304,6 +257,34 @@ domReady.then(() => {
 		}
 	});
 });
+
+/* ---- Blocage de la navigation au clavier (touche Tab) ---- */
+
+(function () {
+  const CHAMPS_SAISIE = ['INPUT', 'TEXTAREA', 'SELECT'];
+
+  window.addEventListener('keydown', (e) => {
+    if (e.key !== 'Tab') return;
+
+    const actif = document.activeElement;
+
+    // On laisse Tab circuler entre les champs d'un même formulaire
+    if (actif && CHAMPS_SAISIE.includes(actif.tagName) && actif.form) {
+      const champs = Array.from(actif.form.elements)
+        .filter((el) => CHAMPS_SAISIE.includes(el.tagName) && !el.disabled);
+      const index = champs.indexOf(actif);
+      const suivant = e.shiftKey ? champs[index - 1] : champs[index + 1];
+
+      e.preventDefault();
+      if (suivant) suivant.focus();
+      return;
+    }
+
+    // Partout ailleurs : Tab ne fait rien
+    e.preventDefault();
+  }, true);
+})();
+
 
 /*
 function enterFullscreen() {

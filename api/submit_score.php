@@ -19,7 +19,7 @@ $stoppedAt = filter_var($input['stopped_at'] ?? null, FILTER_VALIDATE_INT);
 
 // Validation des données
 if ($photo === '') {
-    $photo = 'assets/img/image.png';
+    sendJson(['success' => false, 'error' => 'Une photo est obligatoire.'], 422);
 }
 
 if ($firstName === '' || $lastName === '' || $finalTime === '' || $stoppedAt === false) {
@@ -30,19 +30,24 @@ if (mb_strlen($firstName) > 80 || mb_strlen($lastName) > 80) {
     sendJson(['success' => false, 'error' => 'Le nom ou le prénom est trop long.'], 422);
 }
 
-if ($stoppedAt < 1 || $stoppedAt > 3) {
-    sendJson(['success' => false, 'error' => 'L’étape doit être comprise entre 1 et 3.'], 422);
+if ($stoppedAt < 1 || $stoppedAt > 5) {
+    sendJson(['success' => false, 'error' => 'L’étape doit être comprise entre 1 et 5.'], 422);
 }
 
-if (!preg_match('/^(\d{1,3}):([0-5]\d)\.(\d{3})$/', $finalTime, $timeParts)) {
-    sendJson(['success' => false, 'error' => 'Le temps doit respecter le format MM:SS.mmm.'], 422);
+if (!preg_match('/^(\d{1,3}):([0-5]\d):(\d{3})$/', $finalTime, $timeParts)) {
+    sendJson(['success' => false, 'error' => 'Le temps doit respecter le format MM:SS:mmm.'], 422);
 }
 
 $finalTimeMs = ((int) $timeParts[1] * 60 * 1000)
     + ((int) $timeParts[2] * 1000)
     + (int) $timeParts[3];
 
-if (strlen($photo) > 8 * 1024 * 1024) {
+if (!preg_match('/^data:image\/(jpeg|png|webp);base64,([A-Za-z0-9+\/=]+)$/', $photo, $photoParts)) {
+    sendJson(['success' => false, 'error' => 'La photo doit être envoyée au format image.'], 422);
+}
+
+$photoData = base64_decode($photoParts[2], true);
+if ($photoData === false || strlen($photoData) > 8 * 1024 * 1024 || getimagesizefromstring($photoData) === false) {
     sendJson(['success' => false, 'error' => 'La photo est trop volumineuse.'], 422);
 }
 

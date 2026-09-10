@@ -1,4 +1,4 @@
-// Scénario pour la page 1 : gestion du menu principal qui change en fonction du scroll de l'utilisateur.
+
 const menu = document.getElementById('menu-principal');
 const VITESSE = 1500;
 const SEUIL_SCROLL = 6;
@@ -9,12 +9,11 @@ const boutonQuitter = document.querySelector('#menu-principal a:last-child');
 
 
 let direction = -1;
-let position = 0; // sera remplacé juste après par la position sous le sous-titre
+let position = 0;
 let demarre = false;
 let dernierScrollY = window.scrollY;
 let dernierTemps = performance.now();
 
-// Gestion du menu principal
 if (!menu) {
   console.warn('Le menu principal est introuvable.');
 } else {

@@ -1,3 +1,5 @@
+recordPageTiming(2);
+
 (function () {
   // Combinaison attendue, déduite de l'ordre de première apparition
   // des lettres en gras dans le texte (V -> F -> K -> G)
