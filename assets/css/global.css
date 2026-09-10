@@ -111,49 +111,146 @@ main {
 /* ---- Contenu de la page 2 ---- */
  
 .contenu {
-  background: #ffffff;
-  padding: 34px 40px 50px;
+  max-width: 820px;
+  margin: 0 auto;
+}
+
+ 
+.consigne {
+  margin-bottom: 20px;
+  padding: 22px 26px 20px;
+  background: #003399;
+  background-image: linear-gradient(180deg, #0a47b8 0%, #003399 55%, #002878 100%);
+  border: 1px solid #001f5c;
+  box-shadow: 0 2px 0 #001f5c;
+  color: #ffffff;
 }
  
-.contenu h1,
-.contenu #texte-enigme,
-.contenu .zone-sortie {
-  max-width: 780px;
+.consigne h1 {
+  margin: 0 0 14px;
+  font-size: 19px;
+  line-height: 1.35;
+  text-align: center;
+  text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.45);
+}
+ 
+.principe {
+  margin: 0;
+  max-width: 62ch;
   margin-left: auto;
   margin-right: auto;
+  font-size: 13px;
+  line-height: 1.75;
+  color: #d7e2fa;
 }
  
-.contenu h1 {
-  font-size: 19px;
+.principe-note {
+  margin: 10px auto 0;
+  max-width: 62ch;
+  font-size: 12px;
+  font-style: italic;
+  color: #9db4e8;
+}
+ 
+
+.consigne-page {
+  margin: 18px auto 0;
+  max-width: 62ch;
+  padding: 12px 16px 13px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid #4a72c8;
+  border-left: 4px solid #f5c518;
+}
+ 
+.consigne-page-titre {
+  display: block;
+  margin-bottom: 5px;
+  font-size: 10px;
+  font-weight: bold;
+  letter-spacing: 1.6px;
+  text-transform: uppercase;
+  color: #f5c518;
+}
+ 
+.consigne-page p {
+  margin: 0;
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: #ffffff;
+}
+ 
+
+.feuille {
+  background: #fdfcf7;
+  border: 1px solid #8f8b76;
+  box-shadow: 0 2px 0 #9a9689, 0 6px 18px rgba(0, 0, 0, 0.22);
+  padding: 30px 40px 34px;
+}
+ 
+.feuille h2 {
+  margin: 0 0 20px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #d8d4c0;
+  font-size: 16px;
   color: #003399;
-  border-bottom: 1px solid #c9c5b0;
-  padding-bottom: 10px;
-  margin-top: 0;
-  margin-bottom: 22px;
 }
  
 #texte-enigme {
+  margin: 0;
   font-size: 14px;
-  line-height: 1.85;
+  line-height: 1.9;
   text-align: justify;
+  color: #23231f;
 }
  
 #texte-enigme strong {
+  font-weight: bold;
   color: #000000;
 }
  
-/* ---- Bouton de sortie ---- */
- 
 .zone-sortie {
-  margin-top: 34px;
-  min-height: 32px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 30px;
+  padding-top: 22px;
+  border-top: 1px solid #d8d4c0;
+  min-height: 34px;
+}
+ 
+.voyants {
+  display: flex;
+  gap: 7px;
+  padding: 6px 9px;
+  background: #2b2b2b;
+  border: 2px inset #6f6f6f;
+  border-radius: 3px;
+}
+ 
+.voyant {
+  width: 11px;
+  height: 11px;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  background: #8f2018;
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.35),
+    0 0 4px rgba(192, 57, 43, 0.55);
+  transition: background 0.18s ease, box-shadow 0.18s ease;
+}
+ 
+.voyant.allume {
+  background: #2ecc40;
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.55),
+    0 0 7px rgba(46, 204, 64, 0.95);
 }
  
 .lien-sortie {
   display: inline-block;
   visibility: visible;
   opacity: 1;
-  padding: 7px 18px;
+  padding: 7px 20px;
   background: linear-gradient(180deg, #f4f4f4 0%, #c9c9c9 50%, #a8a8a8 100%);
   border: 1px solid #4d4d4d;
   border-radius: 3px;
@@ -168,14 +265,16 @@ main {
   background: linear-gradient(180deg, #ffffff 0%, #d8d8d8 50%, #b6b6b6 100%);
 }
  
-/* Cliqué trop tôt : le bouton s'efface */
+.lien-sortie:active {
+  padding: 8px 19px 6px 21px;
+}
+
 .lien-sortie.masque {
   visibility: hidden;
   opacity: 0;
   pointer-events: none;
 }
  
-/* Combinaison entrée : le bouton devient le vrai lien vers la page suivante */
 .lien-sortie.debloque {
   background: linear-gradient(180deg, #ffe27a 0%, #f5c518 50%, #d9a406 100%);
   border-color: #8a6d00;
@@ -184,4 +283,15 @@ main {
  
 .lien-sortie.debloque:hover {
   background: linear-gradient(180deg, #fff0a3 0%, #f7d038 50%, #e0b30a 100%);
+}
+ 
+@media (max-width: 700px) {
+  body { padding: 16px 10px 32px; }
+  .consigne { padding: 16px 16px 15px; }
+  .consigne h1 { font-size: 16px; }
+  .principe { font-size: 12.5px; line-height: 1.65; }
+  .consigne-page p { font-size: 13px; }
+  .feuille { padding: 22px 20px 26px; }
+  .feuille h2 { font-size: 15px; }
+  #texte-enigme { font-size: 13px; line-height: 1.75; }
 }
